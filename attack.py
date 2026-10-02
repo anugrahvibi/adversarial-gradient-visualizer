@@ -55,7 +55,7 @@ def main():
     # Attack Hyperparameters
     EPSILON = 0.2
     fgsm_attack = fb.attacks.FGSM()
-    pgd_attack = fb.attacks.LinfPGD(steps=40, rel_stepsize=0.01)
+    pgd_attack = fb.attacks.LinfPGD(steps=40, rel_stepsize=0.2)
 
     # Search for a correctly classified sample where attacks demonstrate clear adversarial perturbation
     image_tensor, label_tensor, clean_pred, clean_logits = None, None, None, None
