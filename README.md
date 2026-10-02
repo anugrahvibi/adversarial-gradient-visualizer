@@ -4,7 +4,7 @@ An end-to-end deep learning security project visualizing and analyzing gradient-
 
 ---
 
-## 🎯 Executive Summary
+## Executive Summary
 
 Machine learning models deployed in security-critical environments are susceptible to **adversarial perturbations**—imperceptible, mathematically crafted noise added to inputs that forces misclassification while remaining virtually indistinguishable to the human eye.
 
@@ -17,7 +17,7 @@ This project implements:
 
 ---
 
-## 🏗️ Model Architecture
+## Model Architecture
 
 The target classifier is a lightweight, deterministic Convolutional Neural Network (`SimpleCNN`) designed for fast convergence and clear gradient flow:
 
@@ -39,7 +39,7 @@ Logits [10 Classes]
 
 ---
 
-## 🔬 Attack Mathematics & Formulations
+## Attack Mathematics & Formulations
 
 ### 1. Fast Gradient Sign Method (FGSM)
 FGSM is a fast, one-step attack that moves the input tensor in the direction of the loss function's gradient sign with respect to the input:
@@ -61,7 +61,7 @@ where:
 
 ---
 
-## 📊 Experimental Results & Metrics
+## Experimental Results & Metrics
 
 Below are the quantitative evaluation metrics recorded on test sample `Index: 1` (Ground Truth: **Class 2**):
 
@@ -76,7 +76,7 @@ Below are the quantitative evaluation metrics recorded on test sample `Index: 1`
 
 ---
 
-## 🖼️ 1x5 Visual Matrix Comparison
+## 1x5 Visual Matrix Comparison
 
 The attack script generates a 1x5 visual matrix saved as `fgsm_vs_pgd_comparison.png`:
 
@@ -90,7 +90,7 @@ The attack script generates a 1x5 visual matrix saved as `fgsm_vs_pgd_comparison
 
 ---
 
-## 🪵 Lessons Learned & The Debugging Chronicles
+## Lessons Learned & The Debugging Chronicles
 
 ### 1. The Paradox: When Weak Attacks Seem Stronger
 During initial implementation, we encountered an unexpected anomaly:
@@ -101,14 +101,14 @@ During initial implementation, we encountered an unexpected anomaly:
 [Initial Paradoxical Run]
   Clean Image       -> Predicted: Class 2 (99.84% conf)
   FGSM Attack       -> Predicted: Class 6 (94.69% conf)  [SUCCESS]
-  PGD Attack        -> Predicted: Class 2 (80.05% conf)  [FAILED ❌]
+  PGD Attack        -> Predicted: Class 2 (80.05% conf)  [FAILED]
 ```
 
 ### 2. Root Cause Analysis: The "Short Walk Problem"
 A deep dive into the Foolbox parameterization revealed the issue:
 
 ```python
-# ❌ BROKEN CONFIGURATION
+# BROKEN CONFIGURATION
 pgd_attack = fb.attacks.LinfPGD(steps=40, rel_stepsize=0.01)
 ```
 
@@ -128,7 +128,7 @@ While FGSM instantly jumped the full $0.20$ distance in a single stride, PGD was
 To allow PGD to explore the entire $\epsilon$-ball and cross complex local loss barriers, we switched to an absolute step size ($\alpha = 0.02$):
 
 ```python
-# ✅ FIXED CONFIGURATION
+# FIXED CONFIGURATION
 pgd_attack = fb.attacks.LinfPGD(steps=40, abs_stepsize=0.02)
 ```
 
@@ -147,7 +147,7 @@ PGD now had sufficient step budget to traverse the $\epsilon$-ball, project back
 
 ---
 
-## 🚀 How to Reproduce & Run
+## How to Reproduce & Run
 
 ### 1. Environment Setup
 Activate your environment with PyTorch and Foolbox installed:
@@ -172,7 +172,7 @@ python attack.py
 
 ---
 
-## 📚 Key Takeaways for AI Security Engineers
+## Key Takeaways for AI Security Engineers
 
 1. **Hyperparameter Coupling**: In iterative attacks like PGD, `steps` and `stepsize` must satisfy $N \times \alpha \ge \epsilon$ (typically $N \times \alpha \approx 1.5\epsilon \text{ to } 2.5\epsilon$) to allow full traversal and boundary projection.
 2. **Confidence Degradation vs. Hard Flips**: Even when an attack does not flip a label, monitoring intermediate logits/softmax probabilities reveals vulnerability trends.
