@@ -55,7 +55,7 @@ def main():
     # Attack Hyperparameters
     EPSILON = 0.2
     fgsm_attack = fb.attacks.FGSM()
-    pgd_attack = fb.attacks.LinfPGD(steps=40, rel_stepsize=0.2)
+    pgd_attack = fb.attacks.LinfPGD(steps=40, abs_stepsize=0.02)
 
     # Search for a correctly classified sample where attacks demonstrate clear adversarial perturbation
     image_tensor, label_tensor, clean_pred, clean_logits = None, None, None, None
@@ -128,7 +128,7 @@ def main():
     print(f"  - Adversarial Prediction: Class {fgsm_pred} (Confidence: {fgsm_conf:.2f}%)")
     print(f"  - Max L_inf Perturbation: {np.abs(fgsm_diff_np).max():.4f}")
     print("-" * 65)
-    print(f"PGD Attack (eps={EPSILON}, steps=40, rel_stepsize=0.01)")
+    print(f"PGD Attack (eps={EPSILON}, steps=40, abs_stepsize=0.02)")
     print(f"  - Attack Success       : {pgd_success.item()}")
     print(f"  - Adversarial Prediction: Class {pgd_pred} (Confidence: {pgd_conf:.2f}%)")
     print(f"  - Max L_inf Perturbation: {np.abs(pgd_diff_np).max():.4f}")
